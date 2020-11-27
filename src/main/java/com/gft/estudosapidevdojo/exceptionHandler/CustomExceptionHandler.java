@@ -36,7 +36,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-		String userMessage = this.messageSource.getMessage("mensagem.invalida", null, LocaleContextHolder.getLocale());
+		String userMessage = this.messageSource.getMessage("message.invalid", null, LocaleContextHolder.getLocale());
 		String devMessage = ExceptionUtils.getMessage(ex);
 
 		List<Error> erros = Arrays
@@ -49,7 +49,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex,
 			HttpHeaders headers, HttpStatus status, WebRequest request) {
 
-		List<Error> erros = this.criarListaDeErros(ex.getBindingResult());
+		List<Error> erros = this.createErrorList(ex.getBindingResult());
 
 		return this.handleExceptionInternal(ex, erros, headers, HttpStatus.BAD_REQUEST, request);
 	}
@@ -70,7 +70,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({ DataIntegrityViolationException.class })
 	public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException ex,
 			WebRequest request) {
-		String userMessage = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
+		String userMessage = this.messageSource.getMessage("resource.operation-not-allowed", null,
 				LocaleContextHolder.getLocale());
 		String devMessage = ExceptionUtils.getRootCauseMessage(ex);
 
@@ -83,7 +83,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler({ InvalidDataAccessApiUsageException.class })
 	public ResponseEntity<Object> handleInvalidDataAccessApiUsageException(InvalidDataAccessApiUsageException ex,
 			WebRequest request) {
-		String userMessage = this.messageSource.getMessage("recurso.operacao-nao-permitida", null,
+		String userMessage = this.messageSource.getMessage("resource.operation-not-allowed", null,
 				LocaleContextHolder.getLocale());
 		String devMessage = ExceptionUtils.getRootCauseMessage(ex);
 
@@ -117,7 +117,7 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 		return this.handleExceptionInternal(ex, erros, new HttpHeaders(), HttpStatus.FORBIDDEN, request);
 	}
 
-	private List<Error> criarListaDeErros(BindingResult bindingResult) {
+	private List<Error> createErrorList(BindingResult bindingResult) {
 		List<Error> erros = new ArrayList<>();
 
 		for (FieldError fieldError : bindingResult.getFieldErrors()) {

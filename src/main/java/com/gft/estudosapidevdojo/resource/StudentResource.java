@@ -1,13 +1,14 @@
 package com.gft.estudosapidevdojo.resource;
 
-import java.util.List;
-
 import javax.validation.Valid;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,8 +31,9 @@ public class StudentResource {
 	StudentRepository studentRepository;
 
 	@GetMapping
-	public List<Student> listAll(@RequestParam(required = false) String name) {
-		return this.studentRepository.findByNameContaining(name);
+	public Page<Student> listAll(@RequestParam(required = false, defaultValue = "") String name,
+			@RequestParam(required = false) Pageable pageable) {
+		return this.studentRepository.findByNameContaining(name, pageable);
 	}
 
 	@GetMapping("/{id}")
@@ -41,6 +43,8 @@ public class StudentResource {
 		});
 	}
 
+	@Transactional(rollbackFor = Exception.class) // ANOTAÇÃO PARA TORNAR O MÉTODO EM UMA TRANSACTION (ROLLBACK NO CASO
+													// DE ERROS)
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Student save(@RequestBody @Valid Student student) {
